@@ -101,6 +101,7 @@ const SubjectSelectionForm2 = () => {
   };
   
   const handleSubmit = async (e) => {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:6969';
     e.preventDefault();
   
     // Prepare form data
@@ -135,7 +136,7 @@ const SubjectSelectionForm2 = () => {
     const token = localStorage.getItem("jwt");
 
     try {
-      const response = await fetch("/forms", {
+      const response = await fetch(backendUrl+"/forms", {
         method: "POST",
         body: formDataToSend,
         headers: {

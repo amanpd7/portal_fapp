@@ -10,13 +10,15 @@ function Login({ onLogin, onNavigateToRegister }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:6969';
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setError('');
     try {
-      const response = await axios.post('/login', {
+      const response = await axios.post(backendUrl+'/login', {
         username,
         password
       });
