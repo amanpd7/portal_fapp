@@ -10,7 +10,7 @@ function Login({ onLogin, onNavigateToRegister }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:6969';
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 
   const handleSubmit = async (event) => {

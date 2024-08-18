@@ -84,7 +84,7 @@ const SubjectSelectionForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:6969';
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
     e.preventDefault();
   
     // Prepare form data
