@@ -662,7 +662,7 @@ const Form = () => {
             </button>
           </div>
           <footer className="form-footer">
-            <p>&copy; 2024 Your Organization Name. All rights reserved.</p>
+            <p>&copy; 2024 https://panel.org.in All rights reserved.</p>
           </footer>
         </form>
       </div>
