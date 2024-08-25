@@ -608,7 +608,7 @@ const Form = () => {
             <div className="qualification-row">
               <label>Year of Passing:</label>
               <input
-                type="number"
+                type="text"
                 name="yearOfPassing"
                 value={formData.educationDetails?.yearOfPassing || ""}
                 onChange={handleEducationDetailsChange}
