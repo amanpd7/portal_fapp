@@ -1,24 +1,49 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from 'jwt-decode';
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import "./merged_styles.css";
 import logo from "./images/bosse.jpg";
 import { FormContext } from "./FormContext"; // Import the context
+import RegisterModal from './register'; // Correct the path to where the RegisterModal file actually exists
 
 const Form = () => {
   const { formData, setFormData } = useContext(FormContext); // Use context to manage form data
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+  const [username, setUsername] = useState('');
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); // State to handle modal visibility
 
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
+
   const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
+
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
 
   useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setUsername(decodedToken.username); // Assuming 'username' is the key in the token payload
+      } catch (error) {
+        console.error('Invalid token:', error);
+      }
+    }
     // Reset form data when the component mounts
     setFormData({
       admissionMode: "",
@@ -52,7 +77,7 @@ const Form = () => {
       imageError: "",
     });
     setErrors({});
-  }, [setFormData]);
+  }, [setFormData, username]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -66,7 +91,8 @@ const Form = () => {
       if (!isValidAadhar) {
         setErrors({
           ...errors,
-          aadharNumber: "Aadhar number must be exactly 12 digits long and numeric.",
+          aadharNumber:
+            "Aadhar number must be exactly 12 digits long and numeric.",
         });
       } else {
         setErrors({
@@ -152,7 +178,12 @@ const Form = () => {
       formIsValid = false;
       errors["gender"] = "Gender is required";
     }
-    if (!formData.dob || !formData.dob.day || !formData.dob.month || !formData.dob.year) {
+    if (
+      !formData.dob ||
+      !formData.dob.day ||
+      !formData.dob.month ||
+      !formData.dob.year
+    ) {
       formIsValid = false;
       errors["dob"] = "Complete Date of Birth is required";
     }
@@ -206,6 +237,14 @@ const Form = () => {
     }
   };
 
+  const handleRegisterButtonClick = () => {
+    setIsRegisterModalOpen(true); // Open the register modal when the custom button is clicked
+  };
+
+  const handleCloseModal = () => {
+    setIsRegisterModalOpen(false); // Close the modal
+  };
+
   const handleReset = () => {
     setFormData({
       admissionMode: "",
@@ -243,22 +282,43 @@ const Form = () => {
 
   return (
     <div>
-      <div className="logo-section">
-        <img src={logo} alt="Bosse Logo" className="logo" />
-      </div>
+      <header className="form-header">
+        <div className="logo-section">
+          <img src={logo} alt="Bosse Logo" className="logo" />
+        </div>
+        <h1 className="form-title">Student Form</h1>
+        <div className="header-right">
+          <span className="welcome-text">Welcome, {username}</span>
+          {username === "admin" && (  // Replace "specifiedUser" with the actual username or role check
+            <button className="custom-button" onClick={handleRegisterButtonClick}>
+              Register New User
+            </button>
+          )}
+          <button className="header-button" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      </header>
+
+
+      <RegisterModal isOpen={isRegisterModalOpen} onClose={handleCloseModal} />
+
       <div className="form-container">
-        <button className="logout-button" onClick={handleLogout}>
-          Logout
-        </button>
         <form>
           {/* Student's Photo */}
           <div className="photo-section">
             <label>Student's Photo</label>
             <input type="file" accept="image/*" onChange={handleImageChange} />
             {formData.selectedImage && (
-              <img src={formData.selectedImage} alt="Selected" className="image-preview" />
+              <img
+                src={formData.selectedImage}
+                alt="Selected"
+                className="image-preview"
+              />
             )}
-            {formData.imageError && <p style={{ color: "red" }}>{formData.imageError}</p>}
+            {formData.imageError && (
+              <p style={{ color: "red" }}>{formData.imageError}</p>
+            )}
             <p>Note: The size of the photo should be less than 1MB</p>
           </div>
 
@@ -267,24 +327,43 @@ const Form = () => {
             <div className="details-column">
               <h3>Details</h3>
               <label>Admission Mode *</label>
-              <select name="admissionMode" value={formData.admissionMode || ""} onChange={handleInputChange} required>
+              <select
+                name="admissionMode"
+                value={formData.admissionMode || ""}
+                onChange={handleInputChange}
+                required
+              >
                 <option value="">Select Mode</option>
                 <option value="FRESH">FRESH</option>
                 <option value="TOC">TOC</option>
                 <option value="PART ADMISSION">PART ADMISSION</option>
               </select>
-              {errors.admissionMode && <p style={{ color: "red" }}>{errors.admissionMode}</p>}
+              {errors.admissionMode && (
+                <p style={{ color: "red" }}>{errors.admissionMode}</p>
+              )}
 
               <label>Admission Session *</label>
-              <select name="admissionSession" value={formData.admissionSession || ""} onChange={handleInputChange} required>
+              <select
+                name="admissionSession"
+                value={formData.admissionSession || ""}
+                onChange={handleInputChange}
+                required
+              >
                 <option value="">Select Session</option>
                 <option value="BLOCK-1 2024 (M-24)">BLOCK-1 2024 (M-24)</option>
                 <option value="BLOCK-2 2024 (M-24)">BLOCK-2 2024 (M-24)</option>
               </select>
-              {errors.admissionSession && <p style={{ color: "red" }}>{errors.admissionSession}</p>}
+              {errors.admissionSession && (
+                <p style={{ color: "red" }}>{errors.admissionSession}</p>
+              )}
 
               <label>Course (Applying for) *</label>
-              <select name="course" value={formData.course || ""} onChange={handleInputChange} required>
+              <select
+                name="course"
+                value={formData.course || ""}
+                onChange={handleInputChange}
+                required
+              >
                 <option value="">Select Course</option>
                 <option value="SECONDARY">SECONDARY</option>
                 <option value="SENIOR SECONDARY">SENIOR SECONDARY</option>
@@ -293,7 +372,12 @@ const Form = () => {
 
               <label>Student's Name *</label>
               <div className="name-input">
-                <select name="title" value={formData.title || ""} onChange={handleInputChange} required>
+                <select
+                  name="title"
+                  value={formData.title || ""}
+                  onChange={handleInputChange}
+                  required
+                >
                   <option value="">Title</option>
                   <option value="Mr.">Mr.</option>
                   <option value="Ms.">Ms.</option>
@@ -307,7 +391,9 @@ const Form = () => {
                   required
                 />
               </div>
-              {errors.studentName && <p style={{ color: "red" }}>{errors.studentName}</p>}
+              {errors.studentName && (
+                <p style={{ color: "red" }}>{errors.studentName}</p>
+              )}
 
               <label>Father's Name *</label>
               <input
@@ -317,7 +403,9 @@ const Form = () => {
                 onChange={handleInputChange}
                 required
               />
-              {errors.fatherName && <p style={{ color: "red" }}>{errors.fatherName}</p>}
+              {errors.fatherName && (
+                <p style={{ color: "red" }}>{errors.fatherName}</p>
+              )}
 
               <label>Mother's Name *</label>
               <input
@@ -327,10 +415,17 @@ const Form = () => {
                 onChange={handleInputChange}
                 required
               />
-              {errors.motherName && <p style={{ color: "red" }}>{errors.motherName}</p>}
+              {errors.motherName && (
+                <p style={{ color: "red" }}>{errors.motherName}</p>
+              )}
 
               <label>Gender *</label>
-              <select name="gender" value={formData.gender || ""} onChange={handleInputChange} required>
+              <select
+                name="gender"
+                value={formData.gender || ""}
+                onChange={handleInputChange}
+                required
+              >
                 <option value="">Select Gender</option>
                 <option value="MALE">MALE</option>
                 <option value="FEMALE">FEMALE</option>
@@ -340,31 +435,63 @@ const Form = () => {
 
               <label>Date of Birth *</label>
               <div style={{ display: "flex", gap: "10px" }}>
-                <select name="day" value={formData.dob?.day || ""} onChange={handleDobChange} required>
-                  <option value="" disabled>Select Day</option>
+                <select
+                  name="day"
+                  value={formData.dob?.day || ""}
+                  onChange={handleDobChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select Day
+                  </option>
                   {days.map((d) => (
-                    <option key={d} value={d}>{d}</option>
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
                   ))}
                 </select>
 
-                <select name="month" value={formData.dob?.month || ""} onChange={handleDobChange} required>
-                  <option value="" disabled>Select Month</option>
+                <select
+                  name="month"
+                  value={formData.dob?.month || ""}
+                  onChange={handleDobChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select Month
+                  </option>
                   {months.map((m, i) => (
-                    <option key={i} value={i + 1}>{m}</option>
+                    <option key={i} value={i + 1}>
+                      {m}
+                    </option>
                   ))}
                 </select>
 
-                <select name="year" value={formData.dob?.year || ""} onChange={handleDobChange} required>
-                  <option value="" disabled>Select Year</option>
+                <select
+                  name="year"
+                  value={formData.dob?.year || ""}
+                  onChange={handleDobChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select Year
+                  </option>
                   {years.map((y) => (
-                    <option key={y} value={y}>{y}</option>
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
                   ))}
                 </select>
               </div>
               {errors.dob && <p style={{ color: "red" }}>{errors.dob}</p>}
 
               <label>Category *</label>
-              <select name="category" value={formData.category || ""} onChange={handleInputChange} required>
+              <select
+                name="category"
+                value={formData.category || ""}
+                onChange={handleInputChange}
+                required
+              >
                 <option value="">Select Category</option>
                 <option value="GEN">GEN</option>
                 <option value="OBC">OBC</option>
@@ -373,7 +500,9 @@ const Form = () => {
                 <option value="NRI">NRI</option>
                 <option value="FOREIGN NATIONAL">FOREIGN NATIONAL</option>
               </select>
-              {errors.category && <p style={{ color: "red" }}>{errors.category}</p>}
+              {errors.category && (
+                <p style={{ color: "red" }}>{errors.category}</p>
+              )}
             </div>
 
             <div className="details-column">
@@ -388,7 +517,9 @@ const Form = () => {
                   required
                 />
               </div>
-              {errors.permanentAddress && <p style={{ color: "red" }}>{errors.permanentAddress}</p>}
+              {errors.permanentAddress && (
+                <p style={{ color: "red" }}>{errors.permanentAddress}</p>
+              )}
 
               <label>Country *</label>
               <CountryDropdown
@@ -396,7 +527,9 @@ const Form = () => {
                 onChange={(val) => setFormData({ ...formData, country: val })}
                 required
               />
-              {errors.country && <p style={{ color: "red" }}>{errors.country}</p>}
+              {errors.country && (
+                <p style={{ color: "red" }}>{errors.country}</p>
+              )}
 
               <label>State *</label>
               <RegionDropdown
@@ -425,7 +558,9 @@ const Form = () => {
                 onChange={handleInputChange}
                 required
               />
-              {errors.pinCode && <p style={{ color: "red" }}>{errors.pinCode}</p>}
+              {errors.pinCode && (
+                <p style={{ color: "red" }}>{errors.pinCode}</p>
+              )}
 
               <label>Contact No. *</label>
               <input
@@ -435,7 +570,9 @@ const Form = () => {
                 onChange={handleInputChange}
                 required
               />
-              {errors.contactNumber && <p style={{ color: "red" }}>{errors.contactNumber}</p>}
+              {errors.contactNumber && (
+                <p style={{ color: "red" }}>{errors.contactNumber}</p>
+              )}
 
               <label>Email Address *</label>
               <input
@@ -445,7 +582,9 @@ const Form = () => {
                 onChange={handleInputChange}
                 required
               />
-              {errors.emailAddress && <p style={{ color: "red" }}>{errors.emailAddress}</p>}
+              {errors.emailAddress && (
+                <p style={{ color: "red" }}>{errors.emailAddress}</p>
+              )}
 
               <label>Aadhar No.</label>
               <input
@@ -455,7 +594,9 @@ const Form = () => {
                 onChange={handleInputChange}
                 maxLength="12" // This limits the input length to 12 characters in the input field
               />
-              {errors.aadharNumber && <span style={{ color: "red" }}>{errors.aadharNumber}</span>}
+              {errors.aadharNumber && (
+                <span style={{ color: "red" }}>{errors.aadharNumber}</span>
+              )}
             </div>
           </div>
 
@@ -473,7 +614,9 @@ const Form = () => {
                 onChange={handleEducationDetailsChange}
                 required
               />
-              {errors.yearOfPassing && <p style={{ color: "red" }}>{errors.yearOfPassing}</p>}
+              {errors.yearOfPassing && (
+                <p style={{ color: "red" }}>{errors.yearOfPassing}</p>
+              )}
 
               <label>Board:</label>
               <input
@@ -493,7 +636,9 @@ const Form = () => {
                 onChange={handleEducationDetailsChange}
                 required
               />
-              {errors.rollNumber && <p style={{ color: "red" }}>{errors.rollNumber}</p>}
+              {errors.rollNumber && (
+                <p style={{ color: "red" }}>{errors.rollNumber}</p>
+              )}
 
               <label>Registration Number:</label>
               <input
@@ -503,7 +648,9 @@ const Form = () => {
                 onChange={handleEducationDetailsChange}
                 required
               />
-              {errors.registrationNumber && <p style={{ color: "red" }}>{errors.registrationNumber}</p>}
+              {errors.registrationNumber && (
+                <p style={{ color: "red" }}>{errors.registrationNumber}</p>
+              )}
             </div>
           </div>
           <div className="button-container">
@@ -514,6 +661,9 @@ const Form = () => {
               Next
             </button>
           </div>
+          <footer className="form-footer">
+            <p>&copy; 2024 Your Organization Name. All rights reserved.</p>
+          </footer>
         </form>
       </div>
     </div>

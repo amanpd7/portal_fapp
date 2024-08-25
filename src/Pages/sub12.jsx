@@ -30,41 +30,41 @@ const SubjectSelectionForm2 = () => {
 
   const nonLanguageOptions = [
     "MATHEMATICS",
-    "PSYCHOLOGY (P)",
-    "GEOGRAPHY (P)",
-    "PHYSICS (P)",
+    "PSYCHOLOGY(P)*",
+    "GEOGRAPHY (P)*",
+    "PHYSICS (P)*",
     "HISTORY",
-    "CHEMISTRY (P)",
+    "CHEMISTRY(P)*",
     "POLITICAL SCIENCE",
-    "BIOLOGY (P)",
+    "BIOLOGY (P)*",
     "SOCIOLOGY",
     "TOURISM",
-    "PHYSICAL EDUCATION AND YOGA (P)",
+    "PHYSICAL EDUCATION AND YOGA (P)*",
     "ECONOMICS",
     "BUSINESS STUDIES",
     "ACCOUNTANCY",
-    "ENVIRONMENTAL SCIENCE & SUSTAINABLE DEVELOPMENT (P)",
-    "DIGITAL LITERACY & COMPUTER SCIENCE (P)",
+    "ENVIRONMENTAL SCIENCE & SUSTAINABLE DEVELOPMENT(P)*",
+    "DIGITAL LITERACY & COMPUTER SCIENCE(P)*",
     "LAW, JUSTICE & GOVERNANCE",
-    "FAMILY & COMMUNITY STUDIES (P)",
+    "FAMILY & COMMUNITY STUDIES(P)*",
   ];
 
   const vocationalOptions = [
-    "SECRETARIAL PRACTICE (P)",
-    "PLANT PROTECTION (P)",
-    "FURNITURE AND CABINET MAKING (P)",
-    "HOUSE KEEPING (P)",
-    "FOOD PROCESSING (P)",
-    "MOTEL FRONT OFFICE OPERATION (P)",
-    "SOIL AND FERTILIZER MANAGEMENT (P)",
-    "PRESERVATION OF FRUITS AND VEGETABLES (P)",
-    "PAINTING & DRAWING (P)",
-    "EARLY CHILDHOOD CARE AND EDUCATION (P)",
-    "LIBRARY AND INFORMATION SCIENCE (P)",
-    "ELECTRO PLATING (P)",
-    "DATA ENTRY OPERATIONS (P)",
-    "MEDIA & COMMUNICATION STUDIES (P)",
-    "ENTREPRENEURSHIP (P)",
+    "SECRETARIAL PRACTICE(P)*",
+    "PLANT PROTECTION (P)*",
+    "FURNITURE AND CABINET MAKING(P)*",
+    "HOUSE KEEPING(P)*",
+    "FOOD PROCESSING(P)*",
+    "MOTEL FRONT OFFICE OPERATION(P)*",
+    "SOIL AND FERTILIZER MANAGEMENT(P)*",
+    "PRESERVATION OF FRUITS AND VEGETABLES(P)*",
+    "PAINTING & DRAWING(P)*",
+    "EARLY CHILDHOOD CARE AND EDUCATION(P)*",
+    "LIBRARY AND INFORMATION SCIENCE (P)*",
+    "ELECTRO PLATING(P)*",
+    "DATA ENTRY OPERATIONS(P)*",
+    "MEDIA & COMMUNICATION STUDIES(P)*",
+    "ENTREPRENEURSHIP(P)*",
   ];
 
   const handleLanguageChange = (subject) => {
@@ -97,16 +97,16 @@ const SubjectSelectionForm2 = () => {
 
   const handleLogout = () => {
     localStorage.clear(); // Assuming you store user data in localStorage
-    navigate('/login'); // Redirect to login page after logout
+    navigate("/login"); // Redirect to login page after logout
   };
-  
+
   const handleSubmit = async (e) => {
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     e.preventDefault();
-  
+
     // Prepare form data
     const formDataToSend = new FormData();
-  
+
     // Add form fields to formData
     for (const key in formData) {
       if (key === "dob" || key === "educationDetails") {
@@ -117,9 +117,9 @@ const SubjectSelectionForm2 = () => {
     }
 
     if (formData.selectedImageFile) {
-    formDataToSend.append("studentPhoto", formData.selectedImageFile);
-  }
-  
+      formDataToSend.append("studentPhoto", formData.selectedImageFile);
+    }
+
     // Add documents (including files)
     documents.forEach((doc, index) => {
       if (doc.file) {
@@ -127,23 +127,29 @@ const SubjectSelectionForm2 = () => {
       }
       formDataToSend.append(`yearOfPassing_${doc.title}`, doc.yearOfPassing);
     });
-    
+
     // Add selected subjects to formData
     formDataToSend.append("languageSubjects", JSON.stringify(languageSubjects));
-    formDataToSend.append("nonLanguageSubjects", JSON.stringify(nonLanguageSubjects));
-    formDataToSend.append("vocationalSubjects", JSON.stringify(vocationalSubjects));
+    formDataToSend.append(
+      "nonLanguageSubjects",
+      JSON.stringify(nonLanguageSubjects)
+    );
+    formDataToSend.append(
+      "vocationalSubjects",
+      JSON.stringify(vocationalSubjects)
+    );
 
     const token = localStorage.getItem("jwt");
 
     try {
-      const response = await fetch(backendUrl+"/forms", {
+      const response = await fetch(backendUrl + "/forms", {
         method: "POST",
         body: formDataToSend,
         headers: {
-          "Authorization": `Bearer ${token}`, // Add JWT token to the header
+          Authorization: `Bearer ${token}`, // Add JWT token to the header
         },
       });
-  
+
       if (response.ok) {
         console.log("Form submitted successfully");
         navigate("/success"); // Navigate to a success page or somewhere else
@@ -159,93 +165,93 @@ const SubjectSelectionForm2 = () => {
     <div>
       <div className="logo-section">
         <img src={BosseLogo} alt="Bosse Logo" className="logo" />
-    </div>
-    <div className="form-container">
-      <button className="logout-button" onClick={handleLogout}>
-        Logout
-      </button>
-      <div className="header">
-        <h2 className="form-title">Select Subject</h2>
       </div>
-      <p className="form-notes">
-        <b>Notes:</b>
-        <br />
-        (P) denotes that Subject includes practical.
-        <br />
-        You can select Minimum 1 & Maximum 2 in Language Subjects.
-        <br />
-        You can select Minimum 2 & Maximum 4 in Non-Language Subjects.
-        <br />
-        You can select Maximum 2 in Vocational Subjects.
-      </p>
-
-      <form onSubmit={handleSubmit}>
-        <div className="subject-container">
-          <div className="subject-category language-subjects">
-            <h3>Language Subject</h3>
-            {languageOptions.map((subject) => (
-              <div key={subject} className="subject-option">
-                <input
-                  type="checkbox"
-                  checked={languageSubjects.includes(subject)}
-                  onChange={() => handleLanguageChange(subject)}
-                  disabled={
-                    !languageSubjects.includes(subject) &&
-                    languageSubjects.length >= 2
-                  }
-                />
-                <label className="subject-label">{subject}</label>
-              </div>
-            ))}
-          </div>
-
-          <div className="subject-category non-language-subjects">
-            <h3>Non-Language Subject</h3>
-            {nonLanguageOptions.map((subject) => (
-              <div key={subject} className="subject-option">
-                <input
-                  type="checkbox"
-                  checked={nonLanguageSubjects.includes(subject)}
-                  onChange={() => handleNonLanguageChange(subject)}
-                  disabled={
-                    !nonLanguageSubjects.includes(subject) &&
-                    nonLanguageSubjects.length >= 4
-                  }
-                />
-                <label className="subject-label">{subject}</label>
-              </div>
-            ))}
-          </div>
-
-          <div className="subject-category vocational-subjects">
-            <h3>Vocational Subject</h3>
-            {vocationalOptions.map((subject) => (
-              <div key={subject} className="subject-option">
-                <input
-                  type="checkbox"
-                  checked={vocationalSubjects.includes(subject)}
-                  onChange={() => handleVocationalChange(subject)}
-                  disabled={
-                    !vocationalSubjects.includes(subject) &&
-                    vocationalSubjects.length >= 2
-                  }
-                />
-                <label className="subject-label">{subject}</label>
-              </div>
-            ))}
-          </div>
+      <div className="form-container">
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+        <div className="header">
+          <h2 className="form-title">Select Subject</h2>
         </div>
+        <p className="form-notes">
+          <b>Notes:</b>
+          <br />
+          (P) denotes that Subject includes practical.
+          <br />
+          You can select Minimum 1 & Maximum 2 in Language Subjects.
+          <br />
+          You can select Minimum 2 & Maximum 4 in Non-Language Subjects.
+          <br />
+          You can select Maximum 2 in Vocational Subjects.
+        </p>
 
-        <div className="button-container">
-          <button type="button" className="back-button" onClick={handleBack}>
-            Back
-          </button>
-          <button type="submit" className="submit-button">
-            Submit
-          </button>
-        </div>
-      </form>
-    </div>
+        <form onSubmit={handleSubmit}>
+          <div className="subject-container">
+            <div className="subject-category language-subjects">
+              <h3>Language Subject</h3>
+              {languageOptions.map((subject) => (
+                <div key={subject} className="subject-option">
+                  <input
+                    type="checkbox"
+                    checked={languageSubjects.includes(subject)}
+                    onChange={() => handleLanguageChange(subject)}
+                    disabled={
+                      !languageSubjects.includes(subject) &&
+                      languageSubjects.length >= 2
+                    }
+                  />
+                  <label className="subject-label">{subject}</label>
+                </div>
+              ))}
+            </div>
+
+            <div className="subject-category non-language-subjects">
+              <h3>Non-Language Subject</h3>
+              {nonLanguageOptions.map((subject) => (
+                <div key={subject} className="subject-option">
+                  <input
+                    type="checkbox"
+                    checked={nonLanguageSubjects.includes(subject)}
+                    onChange={() => handleNonLanguageChange(subject)}
+                    disabled={
+                      !nonLanguageSubjects.includes(subject) &&
+                      nonLanguageSubjects.length >= 4
+                    }
+                  />
+                  <label className="subject-label">{subject}</label>
+                </div>
+              ))}
+            </div>
+
+            <div className="subject-category vocational-subjects">
+              <h3>Vocational Subject</h3>
+              {vocationalOptions.map((subject) => (
+                <div key={subject} className="subject-option">
+                  <input
+                    type="checkbox"
+                    checked={vocationalSubjects.includes(subject)}
+                    onChange={() => handleVocationalChange(subject)}
+                    disabled={
+                      !vocationalSubjects.includes(subject) &&
+                      vocationalSubjects.length >= 2
+                    }
+                  />
+                  <label className="subject-label">{subject}</label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="button-container">
+            <button type="button" className="back-button" onClick={handleBack}>
+              Back
+            </button>
+            <button type="submit" className="submit-button">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

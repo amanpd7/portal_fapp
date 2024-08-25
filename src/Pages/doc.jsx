@@ -57,7 +57,7 @@ const DocForm = () => {
 
   const handleLogout = () => {
     localStorage.clear(); // Assuming you store user data in localStorage
-    navigate('/login'); // Redirect to login page after logout
+    navigate("/login"); // Redirect to login page after logout
   };
 
   const handleNext = () => {
@@ -91,7 +91,11 @@ const DocForm = () => {
           <div className="student-info">
             <div>
               <label>Batch</label>
-              <input type="text" value={formData.admissionSession || ""} readOnly />
+              <input
+                type="text"
+                value={formData.admissionSession || ""}
+                readOnly
+              />
             </div>
             <div>
               <label>Course</label>
