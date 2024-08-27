@@ -13,15 +13,13 @@ const DocForm = () => {
     console.log("formData.course:", formData.course); // Debugging
     if (formData.course === "SECONDARY") {
       return [
-        { title: "VII", yearOfPassing: "", file: null, fileName: "" },
-        { title: "X", yearOfPassing: "", file: null, fileName: "" },
+        { title: "VIII", yearOfPassing: "", file: null, fileName: "" },
         { title: "AADHAR", yearOfPassing: "", file: null, fileName: "" },
       ];
     } else if (formData.course === "SENIOR SECONDARY") {
       return [
-        { title: "VII", yearOfPassing: "", file: null, fileName: "" },
+        { title: "VIII", yearOfPassing: "", file: null, fileName: "" },
         { title: "X", yearOfPassing: "", file: null, fileName: "" },
-        { title: "XII", yearOfPassing: "", file: null, fileName: "" },
         { title: "AADHAR", file: null, fileName: "" },
       ];
     } else {

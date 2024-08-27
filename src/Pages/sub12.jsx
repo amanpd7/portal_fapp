@@ -30,11 +30,11 @@ const SubjectSelectionForm2 = () => {
 
   const nonLanguageOptions = [
     "MATHEMATICS",
-    "PSYCHOLOGY(P)*",
+    "PSYCHOLOGY (P)*",
     "GEOGRAPHY (P)*",
     "PHYSICS (P)*",
     "HISTORY",
-    "CHEMISTRY(P)*",
+    "CHEMISTRY (P)*",
     "POLITICAL SCIENCE",
     "BIOLOGY (P)*",
     "SOCIOLOGY",
@@ -43,28 +43,28 @@ const SubjectSelectionForm2 = () => {
     "ECONOMICS",
     "BUSINESS STUDIES",
     "ACCOUNTANCY",
-    "ENVIRONMENTAL SCIENCE & SUSTAINABLE DEVELOPMENT(P)*",
-    "DIGITAL LITERACY & COMPUTER SCIENCE(P)*",
+    "ENVIRONMENTAL SCIENCE & SUSTAINABLE DEVELOPMENT (P)*",
+    "DIGITAL LITERACY & COMPUTER SCIENCE (P)*",
     "LAW, JUSTICE & GOVERNANCE",
-    "FAMILY & COMMUNITY STUDIES(P)*",
+    "FAMILY & COMMUNITY STUDIES (P)*",
   ];
 
   const vocationalOptions = [
-    "SECRETARIAL PRACTICE(P)*",
+    "SECRETARIAL PRACTICE (P)*",
     "PLANT PROTECTION (P)*",
-    "FURNITURE AND CABINET MAKING(P)*",
-    "HOUSE KEEPING(P)*",
-    "FOOD PROCESSING(P)*",
-    "MOTEL FRONT OFFICE OPERATION(P)*",
-    "SOIL AND FERTILIZER MANAGEMENT(P)*",
-    "PRESERVATION OF FRUITS AND VEGETABLES(P)*",
-    "PAINTING & DRAWING(P)*",
-    "EARLY CHILDHOOD CARE AND EDUCATION(P)*",
+    "FURNITURE AND CABINET MAKING (P)*",
+    "HOUSE KEEPING (P)*",
+    "FOOD PROCESSING (P)*",
+    "MOTEL FRONT OFFICE OPERATION (P)*",
+    "SOIL AND FERTILIZER MANAGEMENT (P)*",
+    "PRESERVATION OF FRUITS AND VEGETABLES (P)*",
+    "PAINTING & DRAWING (P)*",
+    "EARLY CHILDHOOD CARE AND EDUCATION (P)*",
     "LIBRARY AND INFORMATION SCIENCE (P)*",
-    "ELECTRO PLATING(P)*",
-    "DATA ENTRY OPERATIONS(P)*",
-    "MEDIA & COMMUNICATION STUDIES(P)*",
-    "ENTREPRENEURSHIP(P)*",
+    "ELECTRO PLATING (P)*",
+    "DATA ENTRY OPERATIONS (P)*",
+    "MEDIA & COMMUNICATION STUDIES (P)*",
+    "ENTREPRENEURSHIP (P)*",
   ];
 
   const handleLanguageChange = (subject) => {
@@ -152,7 +152,9 @@ const SubjectSelectionForm2 = () => {
 
       if (response.ok) {
         console.log("Form submitted successfully");
-        navigate("/success"); // Navigate to a success page or somewhere else
+        const data = await response.json();
+        const formNumber = data.formNumber;
+        navigate("/success", { state: { formNumber } }); // Navigate to a success page or somewhere else
       } else {
         console.error("Form submission failed");
       }

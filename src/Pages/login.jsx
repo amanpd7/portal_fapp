@@ -18,13 +18,16 @@ function Login({ onLogin, onNavigateToRegister }) {
     setIsLoading(true);
     setError('');
     try {
-      const response = await axios.post(backendUrl+'/login', {
+      const response = await axios.post(backendUrl + '/login', {
         username,
         password
       });
       localStorage.setItem('jwt', response.data.token);
       onLogin(username, password);
-      navigate('/forms');
+
+      const admissionsCount = response.data.count;
+
+      navigate('/forms', { state: { admissionsCount } });
     } catch (error) {
       console.error('Login failed:', error.response);
       setError('Login failed. Please check your username and password.');

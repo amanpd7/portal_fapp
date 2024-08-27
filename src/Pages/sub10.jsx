@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./merged_styles.css"; // Importing the CSS file
 import BosseLogo from "./images/bosse.jpg"; // Import the BOSSE logo
 import { FormContext } from "./FormContext"; // Import the context
@@ -7,6 +7,7 @@ import { FormContext } from "./FormContext"; // Import the context
 const SubjectSelectionForm = () => {
   const { formData, documents } = useContext(FormContext); // Use formData from context
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [languageSubjects, setLanguageSubjects] = useState([]);
   const [nonLanguageSubjects, setNonLanguageSubjects] = useState([]);
@@ -29,25 +30,25 @@ const SubjectSelectionForm = () => {
 
   const nonLanguageOptions = [
     "MATHEMATICS",
-    "SCIENCE AND TECHNOLOGY(P)*",
+    "SCIENCE AND TECHNOLOGY (P)*",
     "SOCIAL SCIENCE",
     "ECONOMICS",
     "BUSINESS STUDIES",
-    "PSYCHOLOGY(P)*",
+    "PSYCHOLOGY (P)*",
     "INDIAN CULTURE AND HERITAGE",
     "ACCOUNTANCY",
-    "HOME SCIENCE & HUMAN ECOLOGY(P)*",
+    "HOME SCIENCE & HUMAN ECOLOGY (P)*",
   ];
 
   const vocationalOptions = [
     "CARPENTRY (P)*",
-    "SOLAR ENERGY TECHNICIAN(P)*",
-    "BIO GAS TECHNICIAN(P)*",
-    "LAUNDRY SERVICES(P)*",
-    "BAKERY AND CONFECTIONERY(P)*",
-    "WELDING TECHNOLOGY(P)*",
-    "DATA ENTRY OPERATIONS(P)*",
-    "PAINTING & DRAWING(P)*",
+    "SOLAR ENERGY TECHNICIAN (P)*",
+    "BIO GAS TECHNICIAN (P)*",
+    "LAUNDRY SERVICES (P)*",
+    "BAKERY AND CONFECTIONERY (P)*",
+    "WELDING TECHNOLOGY (P)*",
+    "DATA ENTRY OPERATIONS (P)*",
+    "PAINTING & DRAWING (P)*",
   ];
 
   const handleLanguageChange = (subject) => {
@@ -134,8 +135,10 @@ const SubjectSelectionForm = () => {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        const formNumber = data.formNumber;
         console.log("Form submitted successfully");
-        navigate("/success"); // Navigate to a success page or somewhere else
+        navigate("/success", { state: { formNumber } }); // Navigate to a success page or somewhere else
       } else {
         console.error("Form submission failed");
       }

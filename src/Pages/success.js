@@ -1,9 +1,12 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./success.css";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const formNumber = location.state?.formNumber;
 
   useEffect(() => {
     // Redirect to /forms after 3 seconds
@@ -11,7 +14,7 @@ const SuccessPage = () => {
       navigate("/forms");
     }, 3000);
 
-    // Cleanup the timer if the component is unmounted before the time is up
+    // Cleanup the timer if the component is unmounted before the time is u
     return () => clearTimeout(timer);
   }, [navigate]);
 
@@ -23,13 +26,12 @@ const SuccessPage = () => {
         </div>
         <h1 className="success-message">Thank You</h1>
         <p className="success-submessage">
-          Your form has been submitted successfully. For other information
-          contact your official Coordinator.
-        </p>
+            Your form has been submitted successfully. Your form number is: <strong>{formNumber}</strong>.
+            For other information, contact your official Coordinator.        </p>
         {/* <button className="home-button">Go to New Form</button> */}
       </div>
       <footer className="copyright-footer">
-        <p> Website-www.panel.org.in</p>
+        <p>&copy; 2024 https://panel.org.in All rights reserved.</p>
       </footer>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import "./merged_styles.css";
@@ -10,9 +10,12 @@ import RegisterModal from './register'; // Correct the path to where the Registe
 const Form = () => {
   const { formData, setFormData } = useContext(FormContext); // Use context to manage form data
   const navigate = useNavigate();
+  const location = useLocation();
   const [errors, setErrors] = useState({});
   const [username, setUsername] = useState('');
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); // State to handle modal visibility
+  
+  const count = location.state?.admissionsCount;
 
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
@@ -289,6 +292,7 @@ const Form = () => {
         <h1 className="form-title">Student Form</h1>
         <div className="header-right">
           <span className="welcome-text">Welcome, {username}</span>
+          <span className="admissions-count">Admission count - {count}</span>
           {username === "admin" && (  // Replace "specifiedUser" with the actual username or role check
             <button className="custom-button" onClick={handleRegisterButtonClick}>
               Register New User
