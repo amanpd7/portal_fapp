@@ -7,16 +7,20 @@ const SuccessPage = () => {
   const location = useLocation();
 
   const formNumber = location.state?.formNumber;
+  const admissionsCount = parseInt(localStorage.getItem('admissionsCount'), 10) || 0;
 
   useEffect(() => {
-    // Redirect to /forms after 3 seconds
-    const timer = setTimeout(() => {
-      navigate("/forms");
-    }, 3000);
+    const updatedAdmissionsCount = admissionsCount + 1;
+    localStorage.setItem('admissionsCount', updatedAdmissionsCount);
 
-    // Cleanup the timer if the component is unmounted before the time is u
+    // Redirect to /forms after 5 seconds
+    const timer = setTimeout(() => {
+      navigate("/forms", { state: { admissionsCount: updatedAdmissionsCount } });
+    }, 5000);
+
+    // Cleanup the timer if the component is unmounted before the time is up
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate, admissionsCount]);
 
   return (
     <div className="success-container">
@@ -27,7 +31,8 @@ const SuccessPage = () => {
         <h1 className="success-message">Thank You</h1>
         <p className="success-submessage">
             Your form has been submitted successfully. Your form number is: <strong>{formNumber}</strong>.
-            For other information, contact your official Coordinator.        </p>
+            For other information, contact your official Coordinator.
+        </p>
         {/* <button className="home-button">Go to New Form</button> */}
       </div>
       <footer className="copyright-footer">

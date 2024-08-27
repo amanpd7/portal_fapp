@@ -1,26 +1,26 @@
 import React, { useContext, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./merged_styles.css"; // Import the CSS for styling
-import logo from "./images/bosse.jpg";
+import logo from "./images/bosse.png";
 import { FormContext } from "./FormContext"; // Import the context
 
 const DocForm = () => {
-  const { formData, documents, setDocuments } = useContext(FormContext); // Use the form data and documents from the context
+  const { formData, documents, setDocuments } = useContext(FormContext);
   const navigate = useNavigate();
 
-  // Set up document list based on selected course
   const getInitialDocuments = useCallback(() => {
-    console.log("formData.course:", formData.course); // Debugging
     if (formData.course === "SECONDARY") {
       return [
-        { title: "VIII", yearOfPassing: "", file: null, fileName: "" },
-        { title: "AADHAR", yearOfPassing: "", file: null, fileName: "" },
+        { title: "Last Qualified Exam", yearOfPassing: "", file: null, fileName: "" },
+        { title: "AADHAR Front", file: null, fileName: "" },
+        { title: "AADHAR Back", file: null, fileName: "" },
       ];
-    } else if (formData.course === "SENIOR SECONDARY") {
+    } else if (formData.course === "SENIOR-SECONDARY") {
       return [
         { title: "VIII", yearOfPassing: "", file: null, fileName: "" },
-        { title: "X", yearOfPassing: "", file: null, fileName: "" },
-        { title: "AADHAR", file: null, fileName: "" },
+        { title: "Last Qualified Exam", yearOfPassing: "", file: null, fileName: "" },
+        { title: "AADHAR Front", file: null, fileName: "" },
+        { title: "AADHAR Back", file: null, fileName: "" },
       ];
     } else {
       return [];
@@ -30,13 +30,19 @@ const DocForm = () => {
   useEffect(() => {
     if (documents.length === 0) {
       const initialDocuments = getInitialDocuments();
-      console.log("Initial Documents:", initialDocuments); // Debugging
       setDocuments(initialDocuments);
     }
   }, [getInitialDocuments, documents.length, setDocuments]);
 
   const handleFileChange = (index, e) => {
     const file = e.target.files[0];
+    const maxSize = 400 * 1024; // 400KB in bytes
+
+    if (file && file.size > maxSize) {
+      alert("File size exceeds the 400KB limit. Please upload a smaller file.");
+      return;
+    }
+
     const newDocuments = [...documents];
     newDocuments[index].file = file;
     newDocuments[index].fileName = file ? file.name : "";
@@ -61,20 +67,25 @@ const DocForm = () => {
   const handleNext = () => {
     if (formData.course === "SECONDARY") {
       navigate("/sub10"); // Navigate to /sub10
-    } else if (formData.course === "SENIOR SECONDARY") {
+    } else if (formData.course === "SENIOR-SECONDARY") {
       navigate("/sub12"); // Navigate to /sub12
     }
   };
 
   return (
     <div>
-      <div className="logo-section">
-        <img src={logo} alt="Bosse Logo" className="logo" />
-      </div>
+      <header className="form-header">
+        <div className="logo-section">
+          <img src={logo} alt="Bosse Logo" className="logo" />
+        </div>
+        <h1 className="form-title">Documents Upload Form</h1>
+        <div className="header-right">
+          <button className="header-button" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      </header>
       <div className="form-container">
-        <button className="logout-button" onClick={handleLogout}>
-          Logout
-        </button>
         <div className="section-header">
           <h2>Student Details</h2>
         </div>
@@ -114,29 +125,60 @@ const DocForm = () => {
           <h2>Details Of Educational Qualifications</h2>
         </div>
         <div className="education-details">
-          {documents.map((doc, index) => (
-            <div key={index} className="doc-row">
-              <div className="doc-info">
-                <input type="text" value={doc.title} readOnly />
-              </div>
-              <div className="doc-info">
-                <input
-                  type="text"
-                  placeholder="Year of Passing"
-                  value={doc.yearOfPassing}
-                  onChange={(e) => handleYearOfPassingChange(index, e)}
-                />
-              </div>
-              <div className="doc-upload">
-                <input
-                  type="file"
-                  onChange={(e) => handleFileChange(index, e)}
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-                {doc.fileName && <span>{doc.fileName}</span>}
-              </div>
-            </div>
-          ))}
+          {documents.map((doc, index) => {
+            if (doc.title.startsWith("AADHAR")) {
+              return (
+                <div key={`aadhar-${index}`} className="doc-row">
+                  {doc.title === "AADHAR Front" && (
+                    <>
+                      <div className="doc-info">
+                        <label>AADHAR Front</label>
+                        <input
+                          type="file"
+                          onChange={(e) => handleFileChange(index, e)}
+                          accept=".pdf,.jpg,.jpeg,.png"
+                        />
+                        {doc.fileName && <span>{doc.fileName}</span>}
+                      </div>
+                      <div className="doc-info">
+                        <label>AADHAR Back</label>
+                        <input
+                          type="file"
+                          onChange={(e) => handleFileChange(index + 1, e)} // Index for the back file
+                          accept=".pdf,.jpg,.jpeg,.png"
+                        />
+                        {documents[index + 1].fileName && <span>{documents[index + 1].fileName}</span>}
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            } else {
+              return (
+                <div key={index} className="doc-row">
+                  <div className="doc-info">
+                    <input type="text" value={doc.title} readOnly />
+                  </div>
+                  <div className="doc-info">
+                    <input
+                      type="text"
+                      placeholder="Year of Passing"
+                      value={doc.yearOfPassing}
+                      onChange={(e) => handleYearOfPassingChange(index, e)}
+                    />
+                  </div>
+                  <div className="doc-upload">
+                    <input
+                      type="file"
+                      onChange={(e) => handleFileChange(index, e)}
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+                    {doc.fileName && <span>{doc.fileName}</span>}
+                  </div>
+                </div>
+              );
+            }
+          })}
         </div>
 
         <div className="button-container">
@@ -147,6 +189,9 @@ const DocForm = () => {
             Next
           </button>
         </div>
+        <footer className="form-footer">
+          <p>&copy; 2024 https://panel.org.in All rights reserved.</p>
+        </footer>
       </div>
     </div>
   );

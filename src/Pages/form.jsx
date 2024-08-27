@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import "./merged_styles.css";
-import logo from "./images/bosse.jpg";
+import logo from "./images/bosse.png";
 import { FormContext } from "./FormContext"; // Import the context
 import RegisterModal from './register'; // Correct the path to where the RegisterModal file actually exists
 
@@ -15,7 +15,7 @@ const Form = () => {
   const [username, setUsername] = useState('');
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); // State to handle modal visibility
   
-  const count = location.state?.admissionsCount;
+  const count = location.state?.admissionsCount || parseInt(localStorage.getItem('admissionsCount'), 10) || 0;
 
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
@@ -131,10 +131,10 @@ const Form = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 1024 * 1024) {
+      if (file.size > 1024 * 200) {
         setFormData({
           ...formData,
-          imageError: "Image size should be less than 1MB",
+          imageError: "Image size should be less than 200kb",
           selectedImage: null,
         });
       } else {
@@ -289,11 +289,13 @@ const Form = () => {
         <div className="logo-section">
           <img src={logo} alt="Bosse Logo" className="logo" />
         </div>
-        <h1 className="form-title">Student Form</h1>
+        <h1 className="form-title">Student Application Form</h1>
         <div className="header-right">
-          <span className="welcome-text">Welcome, {username}</span>
-          <span className="admissions-count">Admission count - {count}</span>
-          {username === "admin" && (  // Replace "specifiedUser" with the actual username or role check
+          <div className="user-info">
+            <span className="welcome-text">Welcome, {username}</span>
+            <span className="admissions-count">Admission count - {count}</span>
+          </div>
+          {username === "kk92" && (
             <button className="custom-button" onClick={handleRegisterButtonClick}>
               Register New User
             </button>
@@ -303,7 +305,6 @@ const Form = () => {
           </button>
         </div>
       </header>
-
 
       <RegisterModal isOpen={isRegisterModalOpen} onClose={handleCloseModal} />
 
@@ -323,7 +324,7 @@ const Form = () => {
             {formData.imageError && (
               <p style={{ color: "red" }}>{formData.imageError}</p>
             )}
-            <p>Note: The size of the photo should be less than 1MB</p>
+            <p>Note: The size of the photo should be less than 200kb</p>
           </div>
 
           {/* Details Section */}
@@ -370,7 +371,7 @@ const Form = () => {
               >
                 <option value="">Select Course</option>
                 <option value="SECONDARY">SECONDARY</option>
-                <option value="SENIOR SECONDARY">SENIOR SECONDARY</option>
+                <option value="SENIOR-SECONDARY">SENIOR SECONDARY</option>
               </select>
               {errors.course && <p style={{ color: "red" }}>{errors.course}</p>}
 

@@ -73,5 +73,4 @@
   position: absolute;
   bottom: 0;
   font-size: 0.85rem; /* Decreased font size slightly */
-  text-shadow: 0 0 8px #43cea2, 0 0 10px #43cea2, 0 0 12px #43cea2; /* Glowing effect for footer */
 }

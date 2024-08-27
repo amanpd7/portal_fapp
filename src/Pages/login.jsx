@@ -26,6 +26,7 @@ function Login({ onLogin, onNavigateToRegister }) {
       onLogin(username, password);
 
       const admissionsCount = response.data.count;
+      localStorage.setItem('admissionsCount', admissionsCount);
 
       navigate('/forms', { state: { admissionsCount } });
     } catch (error) {
@@ -41,16 +42,18 @@ function Login({ onLogin, onNavigateToRegister }) {
         <div className='logo'>
           {<img src={logo} alt="BOSSE_logo" className="logo" />}
         </div>
-        <h1>BOARD OF OPEN SCHOOLING & SKILL EDUCATION</h1>
+        <h1>
+          BOARD OF OPEN <br /> SCHOOLING & SKILL <br /> EDUCATION
+        </h1>
         <p>
-          BOSSE (Board of Open Schooling & Education), Sikkim is an open School
-          Board to cater to the varied academic needs of divergent groups of
-          students up to pre-degree level.
+          BOSSE (Board of Open Schooling & Education), Sikkim is an open <br />
+          School Board to cater to the varied academic needs of divergent <br />
+          groups of students up to pre-degree level.
         </p>
       </div>
       <div className="right-section">
         <div className="login-box">
-          <h2>Login</h2>
+          <h2>Admin Login</h2>
           <form onSubmit={handleSubmit}>
           <input
             type="text"

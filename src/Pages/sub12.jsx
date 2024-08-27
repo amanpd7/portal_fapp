@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./merged_styles.css"; // Importing the CSS file
-import BosseLogo from "./images/bosse.jpg"; // Import the BOSSE logo
+import logo from "./images/bosse.png"; // Import the BOSSE logo
 import { FormContext } from "./FormContext"; // Import the context
 
 const SubjectSelectionForm2 = () => {
@@ -165,16 +165,18 @@ const SubjectSelectionForm2 = () => {
 
   return (
     <div>
-      <div className="logo-section">
-        <img src={BosseLogo} alt="Bosse Logo" className="logo" />
-      </div>
-      <div className="form-container">
-        <button className="logout-button" onClick={handleLogout}>
-          Logout
-        </button>
-        <div className="header">
-          <h2 className="form-title">Select Subject</h2>
+      <header className="form-header">
+        <div className="logo-section">
+          <img src={logo} alt="Bosse Logo" className="logo" />
         </div>
+        <h1 className="form-title">Select Subjects</h1>
+        <div className="header-right">
+          <button className="header-button" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      </header>
+      <div className="form-container">
         <p className="form-notes">
           <b>Notes:</b>
           <br />
@@ -252,6 +254,9 @@ const SubjectSelectionForm2 = () => {
               Submit
             </button>
           </div>
+          <footer className="form-footer">
+            <p>&copy; 2024 https://panel.org.in All rights reserved.</p>
+          </footer>
         </form>
       </div>
     </div>
