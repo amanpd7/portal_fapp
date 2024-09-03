@@ -14,26 +14,24 @@ const Form = () => {
   const [errors, setErrors] = useState({});
   const [username, setUsername] = useState('');
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); // State to handle modal visibility
-  
+  const [admissionMode, setAdmissionMode] = useState('');
+
+  const [currentSubject, setCurrentSubject] = useState({
+    subjectType: "",
+    practicalMarks: "",
+    assignmentMarks: "",
+    theoryMarks: "",
+    obtainedMarks: "",
+    maximumMarks: "",
+  });
+
   const count = location.state?.admissionsCount || parseInt(localStorage.getItem('admissionsCount'), 10) || 0;
 
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
-
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "January", "February", "March", "April", "May", "June", "July",
+    "August", "September", "October", "November", "December",
   ];
-
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
 
@@ -76,6 +74,7 @@ const Form = () => {
         rollNumber: "",
         registrationNumber: "",
       },
+      addedSubjects: [],
       selectedImage: null,
       imageError: "",
     });
@@ -89,13 +88,16 @@ const Form = () => {
       [name]: value,
     });
 
+    if (name === "admissionMode") {
+      setAdmissionMode(value); // Update admissionMode state when it changes
+    }
+
     if (name === "aadharNumber") {
       const isValidAadhar = /^\d{0,12}$/.test(value); // Allows up to 12 digits only
       if (!isValidAadhar) {
         setErrors({
           ...errors,
-          aadharNumber:
-            "Aadhar number must be exactly 12 digits long and numeric.",
+          aadharNumber: "Aadhar number must be exactly 12 digits long and numeric.",
         });
       } else {
         setErrors({
@@ -112,17 +114,6 @@ const Form = () => {
       ...formData,
       dob: {
         ...formData.dob,
-        [name]: value,
-      },
-    });
-  };
-
-  const handleEducationDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      educationDetails: {
-        ...formData.educationDetails,
         [name]: value,
       },
     });
@@ -227,6 +218,53 @@ const Form = () => {
     return formIsValid;
   };
 
+  const handleEducationDetails = (e) => {
+    const { name, value } = e.target;
+  
+    // Update the formData state by modifying the educationDetails object
+    setFormData((prevState) => ({
+      ...prevState,
+      educationDetails: {
+        ...prevState.educationDetails,
+        [name]: value, // Dynamically update the property based on the input name
+      },
+    }));
+  };
+
+  const handleEducationDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setCurrentSubject({
+      ...currentSubject,
+      [name]: value, // Update the specific field in currentSubject
+    });
+  };
+
+  const handleAddSubject = () => {
+    const { subjectType } = currentSubject;
+
+    // Prevent adding an empty subject
+    if (!subjectType) {
+      alert("Please select a subject type before adding.");
+      return;
+    }
+
+    // Add the current subject to the addedSubjects array
+    setFormData((prevState) => ({
+      ...prevState,
+      addedSubjects: [...(prevState.addedSubjects || []), currentSubject],
+    }));
+
+    // Clear the current subject fields
+    setCurrentSubject({
+      subjectType: "",
+      practicalMarks: "",
+      assignmentMarks: "",
+      theoryMarks: "",
+      obtainedMarks: "",
+      maximumMarks: "",
+    });
+  };
+
   const handleLogout = () => {
     localStorage.clear(); // Assuming you store user data in localStorage
     navigate("/login"); // Redirect to login page after logout
@@ -234,7 +272,10 @@ const Form = () => {
 
   const handleNext = () => {
     if (validateForm()) {
+
       navigate("/docs");
+
+      console.log(formData);
     } else {
       console.log("Form has errors.");
     }
@@ -277,10 +318,19 @@ const Form = () => {
         rollNumber: "",
         registrationNumber: "",
       },
+      addedSubjects: [],
       selectedImage: null,
       imageError: "",
     });
     setErrors({});
+    setCurrentSubject({
+      subjectType: "",
+      practicalMarks: "",
+      assignmentMarks: "",
+      theoryMarks: "",
+      obtainedMarks: "",
+      maximumMarks: "",
+    });
   };
 
   return (
@@ -606,6 +656,115 @@ const Form = () => {
           </div>
 
           {/* Educational Qualifications Section */}
+          {admissionMode === "TOC" && (
+            <div className="education-section">
+              <h3>Details of Last Class/Examination Passed</h3>
+
+              {/* Input Fields for Educational Qualifications */}
+              <div className="qualification-grid">
+                <div className="input-group">
+                  <label>Subject Type:</label>
+                  <select
+                    name="subjectType"
+                    value={currentSubject.subjectType || ""}
+                    onChange={handleEducationDetailsChange}
+                  >
+                    <option value="">Select Subject Type</option>
+                    <option value="Language">Language</option>
+                    <option value="Non-Language">Non-Language</option>
+                  </select>
+                </div>
+
+                <div className="input-group">
+                  <label>Practical Marks:</label>
+                  <input
+                    type="text"
+                    name="practicalMarks"
+                    value={currentSubject.practicalMarks || ""}
+                    onChange={handleEducationDetailsChange}
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Assignment Marks:</label>
+                  <input
+                    type="text"
+                    name="assignmentMarks"
+                    value={currentSubject.assignmentMarks || ""}
+                    onChange={handleEducationDetailsChange}
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Theory Marks:</label>
+                  <input
+                    type="text"
+                    name="theoryMarks"
+                    value={currentSubject.theoryMarks || ""}
+                    onChange={handleEducationDetailsChange}
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Obtained Marks:</label>
+                  <input
+                    type="text"
+                    name="obtainedMarks"
+                    value={currentSubject.obtainedMarks || ""}
+                    onChange={handleEducationDetailsChange}
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Maximum Marks:</label>
+                  <input
+                    type="text"
+                    name="maximumMarks"
+                    value={currentSubject.maximumMarks || ""}
+                    onChange={handleEducationDetailsChange}
+                  />
+                </div>
+
+                {/* Empty placeholders to ensure the button is at the bottom right */}
+                <div className="empty-space"></div>
+                <div className="empty-space"></div>
+
+                <button type="button" onClick={handleAddSubject} className="add-subject-button">
+                  Add Subject
+                </button>
+              </div>
+
+              {/* List of Added Subjects */}
+              <div className="subject-list">
+                <h4>Added Subjects:</h4>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Subject Type</th>
+                      <th>Practical Marks</th>
+                      <th>Assignment Marks</th>
+                      <th>Theory Marks</th>
+                      <th>Obtained Marks</th>
+                      <th>Maximum Marks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {formData.addedSubjects?.map((subject, index) => (
+                      <tr key={index} style={{ backgroundColor: 'white'}}>
+                        <td>{subject.subjectType}</td>
+                        <td>{subject.practicalMarks}</td>
+                        <td>{subject.assignmentMarks}</td>
+                        <td>{subject.theoryMarks}</td>
+                        <td>{subject.obtainedMarks}</td>
+                        <td>{subject.maximumMarks}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          
           <div className="education-section">
             <h3>Details Of Educational Qualifications</h3>
 
@@ -616,7 +775,7 @@ const Form = () => {
                 type="text"
                 name="yearOfPassing"
                 value={formData.educationDetails?.yearOfPassing || ""}
-                onChange={handleEducationDetailsChange}
+                onChange={(e) => handleEducationDetails({ target: { name: 'yearOfPassing', value: e.target.value } })}
                 required
               />
               {errors.yearOfPassing && (
@@ -628,7 +787,7 @@ const Form = () => {
                 type="text"
                 name="board"
                 value={formData.educationDetails?.board || ""}
-                onChange={handleEducationDetailsChange}
+                onChange={(e) => handleEducationDetails({ target: { name: 'board', value: e.target.value } })}
                 required
               />
               {errors.board && <p style={{ color: "red" }}>{errors.board}</p>}
@@ -638,7 +797,7 @@ const Form = () => {
                 type="text"
                 name="rollNumber"
                 value={formData.educationDetails?.rollNumber || ""}
-                onChange={handleEducationDetailsChange}
+                onChange={(e) => handleEducationDetails({ target: { name: 'rollNumber', value: e.target.value } })}
                 required
               />
               {errors.rollNumber && (
@@ -650,7 +809,7 @@ const Form = () => {
                 type="text"
                 name="registrationNumber"
                 value={formData.educationDetails?.registrationNumber || ""}
-                onChange={handleEducationDetailsChange}
+                onChange={(e) => handleEducationDetails({ target: { name: 'registrationNumber', value: e.target.value } })}
                 required
               />
               {errors.registrationNumber && (

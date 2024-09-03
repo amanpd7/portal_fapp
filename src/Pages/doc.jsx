@@ -122,7 +122,7 @@ const DocForm = () => {
         </div>
 
         <div className="section-header">
-          <h2>Details Of Educational Qualifications</h2>
+          <h2>Upload your Documents</h2>
         </div>
         <div className="education-details">
           {documents.map((doc, index) => {

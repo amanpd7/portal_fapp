@@ -92,7 +92,7 @@ const SubjectSelectionForm = () => {
 
     // Add form fields to formData
     for (const key in formData) {
-      if (key === "dob" || key === "educationDetails") {
+      if (key === "dob" || key === "educationDetails" || key === "addedSubjects") {
         formDataToSend.append(key, JSON.stringify(formData[key]));
       } else {
         formDataToSend.append(key, formData[key]);
