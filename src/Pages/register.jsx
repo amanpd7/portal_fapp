@@ -9,8 +9,9 @@ function RegisterModal({ isOpen, onClose }) {
     email: '',
     name: ''
   });
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    const [error, setError] = useState('');
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData({
@@ -36,6 +37,10 @@ function RegisterModal({ isOpen, onClose }) {
       console.error('There was an error registering the user:', error);
       setError('There was an error registering the user. Please try again.');
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState) => !prevState);
   };
 
   if (!isOpen) return null;
@@ -78,16 +83,24 @@ function RegisterModal({ isOpen, onClose }) {
           <label>
             Password:
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'} // Toggle input type
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
             />
           </label>
-          <button type="submit" onClick={handleSubmit}>Register</button>
+          <label className="show-password">
+            <input
+              type="checkbox"
+              checked={showPassword}
+              onChange={togglePasswordVisibility}
+            />
+            Show Password
+          </label>
+          <button type="submit">Register</button>
           <button type="button" onClick={onClose}>Close</button>
-            {error && <div className="error">{error}</div>}
+          {error && <div className="error">{error}</div>}
         </form>
       </div>
     </div>
